@@ -4,16 +4,19 @@ resource "aws_dynamodb_table" "this" {
   read_capacity  = 5
   write_capacity = 5
 
-  hash_key  = "ShortURL"
-  range_key = "UrlId"
+  hash_key  = "shortURL"
+  range_key = "urlId"
+
+  # hash_key  = "UrlId"
+  # range_key = "ShortURL"
 
   attribute {
-    name = "ShortURL"
+    name = "shortURL"
     type = "S"
   }
 
   attribute {
-    name = "UrlId"
+    name = "urlId"
     type = "S"
   }
 
@@ -31,8 +34,7 @@ resource "aws_iam_policy" "this" {
             "Sid": "ReadWriteTable",
             "Effect": "Allow",
             "Action": [
-              "dynamodb:GetItem",
-              "dynamodb:UpdateItem",
+              "dynamodb:Query",
               "dynamodb:PutItem"
             ],
             "Resource": "${aws_dynamodb_table.this.arn}"

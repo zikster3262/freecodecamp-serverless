@@ -21,8 +21,8 @@ exports.handler = async event => {
       const params = {
         TableName: process.env.DYNAMO_TABLE,
         Item: {
-          UrlId: { S: body.url },
-          ShortURL: { S: randomString }
+          urlId: { S: body.url },
+          shortURL: { S: randomString }
         }
       }
 
@@ -45,17 +45,19 @@ exports.handler = async event => {
 
     const params = {
       TableName: process.env.DYNAMO_TABLE,
-      Key: {
-        ShortURL: { S: shortURL }
+      KeyConditionExpression: 'shortURL = :url',
+      ExpressionAttributeValues: {
+        ':url': shortURL
       }
     }
 
-    const data = await docClient.get(params).promise()
-    console.log('Retrieved item:', data.Item)
+    const data = await docClient.query(params).promise()
 
     return {
-      statusCode: 200,
-      body: 'Found'
+      statusCode: 301,
+      headers: {
+        Location: data.Items[0].urlId
+      }
     }
   } else {
     return {
